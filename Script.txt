@@ -29,7 +29,7 @@ CREATE TABLE GYM.Membresia(
 	id_membresia SERIAL PRIMARY KEY,
 	id_usuario INT NOT NULL,
 	id_gym INT NOT NULL,
-	rol VARCHAR(20),
+	rol VARCHAR(20) NOT NULL,
 	UNIQUE(id_usuario, id_gym),
     FOREIGN KEY (id_usuario) REFERENCES GYM.Usuario(id_usuario) ON DELETE CASCADE,
     FOREIGN KEY (id_gym) REFERENCES GYM.Gym(id_gym) ON DELETE CASCADE
