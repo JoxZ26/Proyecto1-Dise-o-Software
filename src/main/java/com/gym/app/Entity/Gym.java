@@ -1,33 +1,33 @@
 package com.gym.app.Entity;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table(name = "Gym", schema =  "gym")
+@Table(name = "gym", schema = "gym")
 public class Gym {
-    private long idGym;
+    @Id
+    private Long idGym;
     private String nombre;
+    private String descripcion;
+    private String logoUrl;
 
-    public Gym(){};
+    public Gym() {}
 
-    public Gym(String nombre){
+    public Gym(String nombre, String descripcion, String logoUrl) {
         this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.logoUrl = logoUrl;
     }
 
-    public long getIdGym() {
-        return idGym;
-    }
+    public Long getIdGym() { return idGym; }
 
-    public void setIdGym(long idGym) {
-        this.idGym = idGym;
-    }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public String getNombre() {
-        return nombre;
-    }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public String getLogoUrl() { return logoUrl; }
+    public void setLogoUrl(String logoUrl) { this.logoUrl = logoUrl; }
 }
-
 
