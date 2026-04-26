@@ -26,6 +26,10 @@ public class Usuario {
         return idUsuario;
     }
 
+    public void setIdUsuario(Long idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
     public String getCorreo() {
         return correo;
     }
