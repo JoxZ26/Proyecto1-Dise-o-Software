@@ -4,10 +4,7 @@ import com.gym.app.Entity.Ejercicio;
 import com.gym.app.Service.EjercicioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/ejercicios")
@@ -17,8 +14,9 @@ public class EjercicioController {
     public EjercicioController(EjercicioService ejercicioService) {
         this.ejercicioService = ejercicioService;
     }
-    @PostMapping
-    public ResponseEntity<?> crear(@RequestBody CrearEjercicioRequest request) {
+
+    @PostMapping("/{idUsuario}")
+    public ResponseEntity<?> crearEjercicio(@RequestBody CrearEjercicioRequest request, @PathVariable Long idUsuario) {
         try {
             Ejercicio ejercicio = new Ejercicio();
             ejercicio.setNombre(request.nombre());
@@ -27,7 +25,7 @@ public class EjercicioController {
             ejercicio.setImagenUrl(request.imagenUrl());
             ejercicio.setVideoUrl(request.videoUrl());
 
-            Ejercicio nuevo = ejercicioService.crearEjercicio(ejercicio);
+            Ejercicio nuevo = ejercicioService.crearEjercicio(ejercicio,idUsuario);
             return ResponseEntity.ok(nuevo);
 
         } catch (IllegalArgumentException e) {

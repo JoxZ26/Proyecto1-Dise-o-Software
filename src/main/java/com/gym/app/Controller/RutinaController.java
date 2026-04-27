@@ -15,7 +15,7 @@ public class RutinaController {
         this.rutinaService = rutinaService;
     }
     @PostMapping("/{idUsuario}")
-    public ResponseEntity<?> crear( @PathVariable Long idUsuario, @RequestBody CrearRutinaRequest request
+    public ResponseEntity<?> crearRutina( @PathVariable Long idUsuario, @RequestBody CrearRutinaRequest request
     ) {
         try {
             Rutina rutina = new Rutina();

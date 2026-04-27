@@ -1,80 +1,43 @@
 package com.gym.app.Service;
 
+import com.gym.app.Entity.Perfil;
 import com.gym.app.Entity.Usuario;
+import com.gym.app.Repository.PerfilRepository;
 import com.gym.app.Enum.Rol;
 import com.gym.app.Repository.UsuarioRepository;
-import com.gym.app.Repository.PerfilRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UsuarioService {
 
-    private final UsuarioRepository usuarioRepository;
-    private final PerfilRepository perfilRepository;
+    private final UsuarioRepository usuarioRepository; //atributo del repositorio de Usuario
+    private final PerfilRepository perfilRepository; //atributo del repositorio de Perfil
 
-    public UsuarioService(UsuarioRepository usuarioRepository,
-                          PerfilRepository perfilRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PerfilRepository perfilRepository) {
         this.usuarioRepository = usuarioRepository;
         this.perfilRepository = perfilRepository;
     }
 
-    @Transactional
-    public Long registrarUsuario(Usuario usuario) {
+    public Usuario registrar(String correo, String password) {
+        if (usuarioRepository.findByCorreo(correo).isPresent()) {
+            throw new RuntimeException("El correo ya está registrado"); //si el correo ya existe = error
+        }
+        Usuario usuario = new Usuario(correo, password, Rol.MEMBER); //crear nuevo usuario
+        Usuario usuarioGuardado = usuarioRepository.save(usuario); // guardar
 
-        validarCorreo(usuario.getCorreo());
-        validarPassword(usuario.getPassword());
-        verificarCorreoUnico(usuario.getCorreo());
+        Perfil perfil = new Perfil(); //crear perfil vacío para el nuevo usuario
+        perfil.setIdUsuario(usuarioGuardado.getIdUsuario()); //misma id que el usuario
+        perfilRepository.save(perfil); //guardar el perfil vacío
 
-        usuario.setRol(Rol.MEMBER);
-
-        Long idUsuario = usuarioRepository.crearUsuario(usuario);
-        perfilRepository.crearPerfilVacio(idUsuario);
-
-        return idUsuario;
+        return usuarioGuardado;
     }
 
     public Usuario login(String correo, String password) {
-
-        validarCorreo(correo);
-        validarPassword(password);
-
-        Usuario usuario = usuarioRepository.buscarPorCorreo(correo)
-                .orElseThrow(() -> new IllegalArgumentException("Credenciales incorrectas"));
-
+        Usuario usuario = usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> new RuntimeException("Correo no registrado")); //caso de que el correo no exista = error
         if (!usuario.getPassword().equals(password)) {
-            throw new IllegalArgumentException("Credenciales incorrectas");
+            throw new RuntimeException("Contraseña incorrecta"); //caso de que la contraseña no coincida = error
         }
-
-        Usuario response = new Usuario();
-        response.setIdUsuario(usuario.getIdUsuario());
-        response.setCorreo(usuario.getCorreo());
-        response.setRol(usuario.getRol());
-
-        return response;
-    }
-
-    private void validarCorreo(String correo) {
-        if (correo == null || correo.isBlank()) {
-            throw new IllegalArgumentException("Correo requerido");
-        }
-        if (!correo.contains("@")) {
-            throw new IllegalArgumentException("Correo inválido");
-        }
-    }
-
-    private void validarPassword(String password) {
-        if (password == null || password.isBlank()) {
-            throw new IllegalArgumentException("Contraseña requerida");
-        }
-        if (password.length() < 4) {
-            throw new IllegalArgumentException("Contraseña muy corta");
-        }
-    }
-
-    private void verificarCorreoUnico(String correo) {
-        if (usuarioRepository.buscarPorCorreo(correo).isPresent()) {
-            throw new IllegalStateException("El correo ya está registrado");
-        }
+        return usuario;
     }
 }
