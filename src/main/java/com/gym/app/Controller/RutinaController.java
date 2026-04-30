@@ -1,6 +1,8 @@
 package com.gym.app.Controller;
 
 import com.gym.app.Entity.Rutina;
+import com.gym.app.Entity.RutinaDia;
+import com.gym.app.Entity.RutinaEjercicio;
 import com.gym.app.Service.RutinaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -62,5 +64,48 @@ public class RutinaController {
         }
     }
 
+    @PutMapping("/{idRutina}/asignar/{idMiembro}")
+    public ResponseEntity<?> asignarAMiembro(@PathVariable Long idRutina,
+                                              @PathVariable Long idMiembro) {
+        try {
+            return ResponseEntity.ok(rutinaService.asignarRutinaAMiembro(idRutina, idMiembro));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
+    @PostMapping("/{idRutina}/dias")
+    public ResponseEntity<?> agregarDia(@PathVariable Long idRutina,
+                                        @RequestBody AgregarDiaRequest request) {
+        try {
+            RutinaDia dia = rutinaService.agregarDia(idRutina, request.diaNumero(), request.nombre());
+            return ResponseEntity.ok(dia);
+        } catch (IllegalArgumentException e) {
+            if (e.getMessage().contains("existe")) {
+                return ResponseEntity.status(409).body(e.getMessage());
+            }
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    public record AgregarDiaRequest(Integer diaNumero, String nombre) {}
+
+    @PostMapping("/dias/{idDia}/ejercicios")
+    public ResponseEntity<?> agregarEjercicio(@PathVariable Long idDia,
+                                               @RequestBody AgregarEjercicioRequest request) {
+        try {
+            RutinaEjercicio resultado = rutinaService.agregarEjercicioADia(
+                    idDia, request.idEjercicio(), request.sets(),
+                    request.reps(), request.descansoSegundos(), request.notas());
+            return ResponseEntity.ok(resultado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    public record AgregarEjercicioRequest(Long idEjercicio, Integer sets,
+                                          Integer reps, Integer descansoSegundos,
+                                          String notas) {}
 }
