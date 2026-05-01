@@ -7,6 +7,8 @@ import com.gym.app.Enum.Rol;
 import com.gym.app.Repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UsuarioService {
 
@@ -39,5 +41,12 @@ public class UsuarioService {
             throw new RuntimeException("Contraseña incorrecta"); //caso de que la contraseña no coincida = error
         }
         return usuario;
+    }
+
+    public List<Usuario> buscar(String correo) {
+        if (correo == null || correo.isBlank()) {
+            throw new IllegalArgumentException("Correo requerido");
+        }
+        return usuarioRepository.findByCorreoContainingIgnoreCase(correo);
     }
 }

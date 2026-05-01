@@ -1,10 +1,9 @@
 package com.gym.app.Service;
 
-import com.gym.app.Entity.Ejercicio;
-import com.gym.app.Entity.Membresia;
-import com.gym.app.Entity.Rutina;
-import com.gym.app.Entity.RutinaDia;
-import com.gym.app.Entity.RutinaEjercicio;
+import com.gym.app.DTO.DiaConEjercicios;
+import com.gym.app.DTO.RutinaCompleta;
+import com.gym.app.Entity.*;
+import com.gym.app.Enum.Rol;
 import com.gym.app.Repository.EjercicioRepository;
 import com.gym.app.Repository.MembresiaRepository;
 import com.gym.app.Repository.RutinaDiaRepository;
@@ -13,6 +12,7 @@ import com.gym.app.Repository.RutinaRepository;
 import com.gym.app.Repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -58,8 +58,25 @@ public class RutinaService {
         return rutinaRepository.save(rutina);
     }
 
-    public List<Rutina> obtenerRutinasActivas(Long idUsuario) {
-        return rutinaRepository.findByIdUsuarioAndActivoTrue(idUsuario);
+    public List<RutinaCompleta> obtenerRutinasActivas(Long idUsuario) {
+
+        List<Rutina> rutinas = rutinaRepository.findByIdUsuarioAndActivoTrue(idUsuario);
+        List<RutinaCompleta> resultado = new ArrayList<>();
+
+        for (Rutina rutina : rutinas) {
+            List<RutinaDia> dias = rutinaDiaRepository.findByIdRutina(rutina.getIdRutina());
+            List<DiaConEjercicios> diasConEjercicios = new ArrayList<>();
+
+            for (RutinaDia dia : dias) {
+                List<RutinaEjercicio> ejercicios =
+                        rutinaEjercicioRepository.findByIdDia(dia.getIdRutinaDia());
+
+                diasConEjercicios.add(new DiaConEjercicios(dia, ejercicios));
+            }
+
+            resultado.add(new RutinaCompleta(rutina, diasConEjercicios));
+        }
+        return resultado;
     }
 
     public Rutina activarRutina(Long idRutina) {
@@ -78,14 +95,19 @@ public class RutinaService {
         return rutinaRepository.save(rutina);
     }
 
-    public Rutina asignarRutinaAMiembro(Long idRutina, Long idMiembro) {
+    public Rutina asignarRutinaAMiembro(Long idRutina, Long idMiembro, Long coachId) {
         Rutina rutina = rutinaRepository.findById(idRutina)
                 .orElseThrow(() -> new RuntimeException("Rutina no encontrada"));
 
         usuarioRepository.findById(idMiembro)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        Long coachId = rutina.getCreatedBy();
+        Usuario coach = usuarioRepository.findById(coachId)
+                .orElseThrow(() -> new RuntimeException("Coach no encontrado"));
+
+        if (coach.getRol() != Rol.COACH) {
+            throw new IllegalStateException("Solo un coach puede asignar rutinas");
+        }
 
         Membresia membresiaCoach = membresiaRepository.findByIdUsuario(coachId)
                 .orElseThrow(() -> new RuntimeException("El coach no tiene membresía en ningún gimnasio"));
@@ -105,10 +127,10 @@ public class RutinaService {
             RutinaDia nuevoDia = new RutinaDia(nuevaRutina.getIdRutina(), diaOriginal.getDiaNumero(), diaOriginal.getNombre());
             nuevoDia = rutinaDiaRepository.save(nuevoDia);
 
-            List<RutinaEjercicio> ejercicios = rutinaEjercicioRepository.findByIdDia(diaOriginal.getIdRutinaD());
+            List<RutinaEjercicio> ejercicios = rutinaEjercicioRepository.findByIdDia(diaOriginal.getIdRutinaDia());
             for (RutinaEjercicio ejercicioOriginal : ejercicios) {
                 RutinaEjercicio nuevoEjercicio = new RutinaEjercicio(
-                        nuevoDia.getIdRutinaD(),
+                        nuevoDia.getIdRutinaDia(),
                         ejercicioOriginal.getIdEjercicio(),
                         ejercicioOriginal.getSets(),
                         ejercicioOriginal.getReps(),
@@ -149,4 +171,11 @@ public class RutinaService {
         RutinaEjercicio rutinaEjercicio = new RutinaEjercicio(idDia, idEjercicio, sets, reps, descansoSegundos, notas);
         return rutinaEjercicioRepository.save(rutinaEjercicio);
     }
+    public List<Rutina> buscar(String nombre) {
+        if (nombre == null || nombre.isBlank()) {
+            throw new IllegalArgumentException("Nombre requerido");
+        }
+        return rutinaRepository.findByNombreContainingIgnoreCase(nombre);
+    }
+
 }
