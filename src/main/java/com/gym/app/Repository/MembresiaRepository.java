@@ -8,4 +8,5 @@ import java.util.Optional;
 @Repository
 public interface MembresiaRepository extends CrudRepository<Membresia, Long> {
     Optional<Membresia> findByIdUsuarioAndIdGym(Long idUsuario, Long idGym); //encontrar membresia por idUsuario e idGym
+    Optional<Membresia> findByIdUsuario(Long idUsuario);
 }

@@ -7,6 +7,8 @@ import com.gym.app.Repository.EjercicioRepository;
 import com.gym.app.Repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class EjercicioService {
     private final EjercicioRepository ejercicioRepository; //atributo para el repositorio de Ejercicio.
@@ -39,5 +41,12 @@ public class EjercicioService {
             throw new IllegalArgumentException("La descripción es obligatoria");
         }
         return ejercicioRepository.save(e);
+    }
+
+    public List<Ejercicio> buscar(String nombre) {
+        if (nombre == null || nombre.isBlank()) {
+            throw new IllegalArgumentException("Nombre requerido");
+        }
+        return ejercicioRepository.findByNombreContainingIgnoreCase(nombre);
     }
 }

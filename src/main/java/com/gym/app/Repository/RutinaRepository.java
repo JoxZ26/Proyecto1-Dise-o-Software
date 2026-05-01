@@ -10,5 +10,6 @@ import java.util.List;
 public interface RutinaRepository extends CrudRepository<Rutina, Long> {
     boolean existsByNombreAndIdUsuario(String nombre, Long idUsuario);
     List<Rutina> findByIdUsuarioAndActivoTrue(Long idUsuario);
+    List<Rutina> findByNombreContainingIgnoreCase(String nombre);
 
 }

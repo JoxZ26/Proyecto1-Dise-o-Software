@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/ejercicios")
 public class EjercicioController {
@@ -33,6 +35,11 @@ public class EjercicioController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(409).body(e.getMessage()); // duplicado
         }
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<Ejercicio>> buscar(@RequestParam String nombre) {
+        return ResponseEntity.ok(ejercicioService.buscar(nombre));
     }
 
     public record CrearEjercicioRequest(
