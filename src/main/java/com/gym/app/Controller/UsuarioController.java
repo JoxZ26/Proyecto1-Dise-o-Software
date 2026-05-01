@@ -5,6 +5,8 @@ import com.gym.app.Service.UsuarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController //Esta clase escribe y responde peticiones HTTP
 @RequestMapping("/usuarios") //todas las rutas de este controller van con /usuarios
 public class UsuarioController {
@@ -25,6 +27,11 @@ public class UsuarioController {
     public ResponseEntity<Usuario> login(@RequestBody UsuarioRequest request) {
         Usuario usuario = usuarioService.login(request.correo(), request.password());
         return ResponseEntity.ok(usuario);
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<Usuario>> buscar(@RequestParam String correo) {
+        return ResponseEntity.ok(usuarioService.buscar(correo));
     }
 
     public record UsuarioRequest(String correo, String password) {} //mapear el JSON del request a un objeto Java

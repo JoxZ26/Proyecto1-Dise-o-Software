@@ -6,7 +6,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table(name = "rutina_ejercicio", schema = "gym")
 public class RutinaEjercicio {
     @Id
-    private Long idRutinaE;
+    private Long idRutinaEjercicio;
     private Long idDia;
     private Long idEjercicio;
     private Integer sets;
@@ -27,7 +27,7 @@ public class RutinaEjercicio {
     }
 
     public Long getIdRutinaE() {
-        return idRutinaE;
+        return idRutinaEjercicio;
     }
 
     public Long getIdDia() {

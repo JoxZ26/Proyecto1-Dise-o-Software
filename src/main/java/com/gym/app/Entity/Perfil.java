@@ -1,5 +1,6 @@
 package com.gym.app.Entity;
 
+import org.springframework.cglib.core.Local;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -8,29 +9,41 @@ import java.time.LocalDate;
 
 @Table(name = "perfil", schema = "gym")
 public class Perfil {
+
     @Id
     private Long idPerfil;
+
+    @Column("id_usuario")
     private Long idUsuario;
+
     private String nombre;
     private String apellido1;
     private String apellido2;
+
+    @Column("fecha_nacimiento")
     private LocalDate fechaNacimiento;
+
     private Double altura;
+
+    @Column("peso_inicial")
     private Double pesoInicial;
+
+    @Column("foto_url")
     private String fotoUrl;
 
-    public Perfil(String nombre, String apellido1, String apellido2, LocalDate fechaNacimiento, Double altura, Double pesoInicial,
-                  String fotoURL) {
+    public Perfil() {}
+
+    public Perfil(String nombre, String apellido1, String apellido2,
+                  LocalDate fechaNacimiento, Double altura,
+                  Double pesoInicial, String fotoUrl) {
         this.nombre = nombre;
         this.apellido1 = apellido1;
         this.apellido2 = apellido2;
         this.fechaNacimiento = fechaNacimiento;
         this.altura = altura;
         this.pesoInicial = pesoInicial;
-        this.fotoUrl = fotoURL;
+        this.fotoUrl = fotoUrl;
     }
-
-    public Perfil() {}
 
     public Long getIdPerfil() {
         return idPerfil;

@@ -1,16 +1,19 @@
 package com.gym.app.Entity;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Table(name = "rutina", schema = "gym")
 public class Rutina {
     @Id
     private Long idRutina;
+
+    @Column("id_usuario")
     private Long idUsuario;
     private String nombre;
     private String descripcion;
-    private Boolean activo = false;
+    private Boolean activo;
     private Long createdBy;
 
     public Rutina() {}

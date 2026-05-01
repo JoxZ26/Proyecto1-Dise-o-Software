@@ -82,7 +82,7 @@ CREATE TABLE GYM.Rutina
 
 CREATE TABLE GYM.Rutina_dia
 (
-    id_rutinaD SERIAL PRIMARY KEY,
+    id_rutina_dia SERIAL PRIMARY KEY,
     id_rutina  INT NOT NULL,
     dia_numero INT,
     nombre     VARCHAR(50),
@@ -92,13 +92,13 @@ CREATE TABLE GYM.Rutina_dia
 
 CREATE TABLE GYM.Rutina_ejercicio
 (
-    id_rutinaE        SERIAL PRIMARY KEY,
+    id_rutina_ejercicio        SERIAL PRIMARY KEY,
     id_dia            INT NOT NULL,
     id_ejercicio      INT NOT NULL,
     sets              INT NOT NULL,
     reps              INT NOT NULL,
     descanso_segundos INT NOT NULL,
     notas             TEXT,
-    FOREIGN KEY (id_dia) REFERENCES GYM.Rutina_dia (id_rutinaD) ON DELETE CASCADE,
+    FOREIGN KEY (id_dia) REFERENCES GYM.Rutina_dia (id_rutina_dia) ON DELETE CASCADE,
     FOREIGN KEY (id_ejercicio) REFERENCES GYM.Ejercicio (id_ejercicio) ON DELETE CASCADE
 );

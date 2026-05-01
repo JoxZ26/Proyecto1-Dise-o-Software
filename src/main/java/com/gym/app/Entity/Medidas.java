@@ -1,6 +1,7 @@
 package com.gym.app.Entity;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
@@ -9,6 +10,8 @@ import java.time.LocalDate;
 public class Medidas {
     @Id
     private Long id;
+
+    @Column("id_usuario")
     private Long idUsuario;
     private Double peso;
     private Double biceps;
