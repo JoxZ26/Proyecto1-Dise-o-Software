@@ -20,7 +20,7 @@ public class UsuarioController {
 
     @PostMapping("/registrar") // este endpoint responde a POST /usuarios/registrar
     public ResponseEntity<Usuario> registrar(@RequestBody UsuarioRequest request) {
-        Usuario usuario = usuarioService.registrar(request.correo(), request.password(), request.rol());
+        Usuario usuario = usuarioService.registrar(request.correo(), request.password());
         return ResponseEntity.ok(usuario);
     }
 
