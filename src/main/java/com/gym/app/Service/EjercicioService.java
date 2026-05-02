@@ -24,16 +24,12 @@ public class EjercicioService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public Ejercicio crearEjercicio(Ejercicio ejercicio, Long idUsuario){
+    public Ejercicio crearEjercicio(Ejercicio ejercicio, Long idUsuario) {
         usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        Membresia membresiaCoach = membresiaRepository.findByIdUsuarioAndRol(idUsuario, Rol.COACH)
-                .orElseThrow(() -> new RuntimeException("El usuario no tiene membresía en ningún gimnasio"));
-
-        if (membresiaCoach.getRol() != Rol.COACH) {
-            throw new IllegalStateException("Solo un coach puede asignar rutinas a miembros del gym");
-        }
+        membresiaRepository.findByIdUsuarioAndRol(idUsuario, Rol.COACH)
+                .orElseThrow(() -> new IllegalStateException("Solo un coach puede crear ejercicios"));
 
         if (ejercicio.getNombre() == null || ejercicio.getNombre().isBlank()) {
             throw new IllegalArgumentException("Nombre es obligatorio");
@@ -43,13 +39,14 @@ public class EjercicioService {
             throw new IllegalArgumentException("Grupo muscular es obligatorio");
         }
 
-        if (ejercicioRepository.existsByNombre(ejercicio.getNombre())) {
-            throw new IllegalArgumentException("El ejercicio ya existe");
-        }
-
-        if (ejercicio.getDescripcion() == null || ejercicio.getDescripcion().isBlank()){
+        if (ejercicio.getDescripcion() == null || ejercicio.getDescripcion().isBlank()) {
             throw new IllegalArgumentException("La descripción es obligatoria");
         }
+
+        if (ejercicioRepository.existsByNombre(ejercicio.getNombre())) {
+            throw new IllegalStateException("El ejercicio ya existe");
+        }
+
         return ejercicioRepository.save(ejercicio);
     }
 

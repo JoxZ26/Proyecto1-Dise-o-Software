@@ -19,30 +19,23 @@ public class RutinaController {
     public RutinaController(RutinaService rutinaService) {
         this.rutinaService = rutinaService;
     }
+
     @PostMapping("/{idUsuario}")
-    public ResponseEntity<?> crearRutina( @PathVariable Long idUsuario, @RequestBody CrearRutinaRequest request
-    ) {
-        try {
-            Rutina rutina = new Rutina();
-            rutina.setIdUsuario(idUsuario);
-            rutina.setNombre(request.nombre());
-            rutina.setDescripcion(request.descripcion());
+    public ResponseEntity<Rutina> crearRutina(
+            @PathVariable Long idUsuario,
+            @RequestBody CrearRutinaRequest request) {
 
-            Rutina nuevaRutina = rutinaService.crearRutina(rutina);
-            return ResponseEntity.ok(nuevaRutina);
+        Rutina rutina = new Rutina();
+        rutina.setIdUsuario(idUsuario);
+        rutina.setNombre(request.nombre());
+        rutina.setDescripcion(request.descripcion());
 
-        } catch (IllegalArgumentException e) {
-            if (e.getMessage().contains("existe")) {
-                return ResponseEntity.status(409).body(e.getMessage());
-            }
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.ok(
+                rutinaService.crearRutina(rutina)
+        );
     }
 
-    public record CrearRutinaRequest(
-            String nombre,
-            String descripcion
-    ) {}
+    public record CrearRutinaRequest(String nombre, String descripcion) {}
 
     @GetMapping("/activas/{idUsuario}")
     public ResponseEntity<List<RutinaCompleta>> obtenerActivas(@PathVariable Long idUsuario) {
@@ -50,65 +43,52 @@ public class RutinaController {
     }
 
     @PutMapping("/{idRutina}/activar")
-    public ResponseEntity<?> activar(@PathVariable Long idRutina) {
-        try {
-            return ResponseEntity.ok(rutinaService.activarRutina(idRutina));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<Rutina> activar(@PathVariable Long idRutina) {
+        return ResponseEntity.ok(rutinaService.activarRutina(idRutina));
     }
 
     @PutMapping("/{idRutina}/desactivar")
-    public ResponseEntity<?> desactivar(@PathVariable Long idRutina) {
-        try {
-            return ResponseEntity.ok(rutinaService.desactivarRutina(idRutina));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<Rutina> desactivar(@PathVariable Long idRutina) {
+        return ResponseEntity.ok(rutinaService.desactivarRutina(idRutina));
     }
 
     @PutMapping("/{idRutina}/asignar/{idMiembro}/{idCoach}")
-    public ResponseEntity<?> asignarAMiembro(@PathVariable Long idRutina,
-                                             @PathVariable Long idMiembro,
-                                             @PathVariable Long idCoach) {
-        try {
-            return ResponseEntity.ok(
-                    rutinaService.asignarRutinaAMiembro(idRutina, idMiembro, idCoach)
-            );
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<Rutina> asignarAMiembro(@PathVariable Long idRutina,
+                                                  @PathVariable Long idMiembro,
+                                                  @PathVariable Long idCoach) {
+
+        return ResponseEntity.ok(
+                rutinaService.asignarRutinaAMiembro(idRutina, idMiembro, idCoach)
+        );
     }
 
     @PostMapping("/{idRutina}/dias")
-    public ResponseEntity<?> agregarDia(@PathVariable Long idRutina,
-                                        @RequestBody AgregarDiaRequest request) {
-        try {
-            RutinaDia dia = rutinaService.agregarDia(idRutina, request.diaNumero(), request.nombre());
-            return ResponseEntity.ok(dia);
-        } catch (IllegalArgumentException e) {
-            if (e.getMessage().contains("existe")) {
-                return ResponseEntity.status(409).body(e.getMessage());
-            }
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<RutinaDia> agregarDia(
+            @PathVariable Long idRutina,
+            @RequestBody AgregarDiaRequest request) {
+
+        return ResponseEntity.ok(
+                rutinaService.agregarDia(idRutina, request.diaNumero(), request.nombre())
+        );
     }
 
     public record AgregarDiaRequest(Integer diaNumero, String nombre) {}
 
     @PostMapping("/dias/{idDia}/ejercicios")
-    public ResponseEntity<?> agregarEjercicio(@PathVariable Long idDia,
-                                               @RequestBody AgregarEjercicioRequest request) {
-        try {
-            RutinaEjercicio resultado = rutinaService.agregarEjercicioADia(
-                    idDia, request.idEjercicio(), request.sets(),
-                    request.reps(), request.descansoSegundos(), request.notas());
-            return ResponseEntity.ok(resultado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<RutinaEjercicio> agregarEjercicio(
+            @PathVariable Long idDia,
+            @RequestBody AgregarEjercicioRequest request) {
+
+        return ResponseEntity.ok(
+                rutinaService.agregarEjercicioADia(
+                        idDia,
+                        request.idEjercicio(),
+                        request.sets(),
+                        request.reps(),
+                        request.descansoSegundos(),
+                        request.notas()
+                )
+        );
     }
 
     @GetMapping("/buscar")
@@ -116,7 +96,11 @@ public class RutinaController {
         return ResponseEntity.ok(rutinaService.buscar(nombre));
     }
 
-    public record AgregarEjercicioRequest(Long idEjercicio, Integer sets,
-                                          Integer reps, Integer descansoSegundos,
-                                          String notas) {}
+    public record AgregarEjercicioRequest(
+            Long idEjercicio,
+            Integer sets,
+            Integer reps,
+            Integer descansoSegundos,
+            String notas
+    ) {}
 }
