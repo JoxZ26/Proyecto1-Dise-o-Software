@@ -9,21 +9,22 @@ public class Usuario {
 
     @Id
     private Long idUsuario;
-
     private String correo;
     private String password;
-    private Rol rol;
 
     public Usuario() {}
 
-    public Usuario(String correo, String password, Rol rol) {
+    public Usuario(String correo, String password) {
         this.correo = correo;
         this.password = password;
-        this.rol = rol;
     }
 
     public Long getIdUsuario() {
         return idUsuario;
+    }
+
+    public void setIdUsuario(Long idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     public String getCorreo() {
@@ -42,11 +43,4 @@ public class Usuario {
         this.password = password;
     }
 
-    public Rol getRol() {
-        return rol;
-    }
-
-    public void setRol(Rol rol) {
-        this.rol = rol;
-    }
 }

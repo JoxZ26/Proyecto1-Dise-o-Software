@@ -1,18 +1,24 @@
 package com.gym.app.Entity;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Table(name = "rutina_dia", schema = "gym")
 public class RutinaDia {
+
     @Id
-    private Long idRutinaD;
+    private Long idRutinaDia;
+
+    @Column("id_rutina")
     private Long idRutina;
+
+    @Column("dia_numero")
     private Integer diaNumero;
+
     private String nombre;
 
-    public RutinaDia() {
-    }
+    public RutinaDia() {}
 
     public RutinaDia(Long idRutina, Integer diaNumero, String nombre) {
         this.idRutina = idRutina;
@@ -20,8 +26,8 @@ public class RutinaDia {
         this.nombre = nombre;
     }
 
-    public Long getIdRutinaD() {
-        return idRutinaD;
+    public Long getIdRutinaDia() {
+        return idRutinaDia;
     }
 
     public Long getIdRutina() {
