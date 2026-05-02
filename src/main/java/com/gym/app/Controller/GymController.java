@@ -16,10 +16,12 @@ public class GymController {
         this.gymService = gymService;
     }
 
-    @PostMapping //endpoint POST para crear
-    public ResponseEntity<Gym> crearGym(@RequestBody GymRequest request) {
-        Gym gym = gymService.crearGym(request.nombre(), request.descripcion(), request.logoUrl());
-        return ResponseEntity.ok(gym);
+    @PostMapping("/{idUsuario}")
+    public ResponseEntity<Gym> crearGym(@PathVariable Long idUsuario,
+                                        @RequestBody GymRequest request) {
+        return ResponseEntity.ok(
+                gymService.crearGym(request.nombre(), request.descripcion(), request.logoUrl(), idUsuario)
+        );
     }
 
     @GetMapping("/buscar") //endpoint de buscar, requiere parámetros para la búsqueda (el nombre)

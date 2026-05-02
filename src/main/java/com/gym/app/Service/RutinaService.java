@@ -102,15 +102,12 @@ public class RutinaService {
         usuarioRepository.findById(idMiembro)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        Usuario coach = usuarioRepository.findById(coachId)
-                .orElseThrow(() -> new RuntimeException("Coach no encontrado"));
-
-        if (coach.getRol() != Rol.COACH) {
-            throw new IllegalStateException("Solo un coach puede asignar rutinas");
-        }
-
         Membresia membresiaCoach = membresiaRepository.findByIdUsuario(coachId)
                 .orElseThrow(() -> new RuntimeException("El coach no tiene membresía en ningún gimnasio"));
+
+        if (membresiaCoach.getRol() != Rol.COACH) {
+            throw new IllegalStateException("Solo un coach puede asignar rutinas a miembros del gym");
+        }
 
         Membresia membresiaMiembro = membresiaRepository.findByIdUsuario(idMiembro)
                 .orElseThrow(() -> new RuntimeException("El miembro no tiene membresía en ningún gimnasio"));
