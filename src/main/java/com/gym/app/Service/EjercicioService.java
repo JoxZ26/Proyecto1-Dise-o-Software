@@ -28,7 +28,7 @@ public class EjercicioService {
         usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        Membresia membresiaCoach = membresiaRepository.findByIdUsuario(idUsuario)
+        Membresia membresiaCoach = membresiaRepository.findByIdUsuarioAndRol(idUsuario, Rol.COACH)
                 .orElseThrow(() -> new RuntimeException("El usuario no tiene membresía en ningún gimnasio"));
 
         if (membresiaCoach.getRol() != Rol.COACH) {

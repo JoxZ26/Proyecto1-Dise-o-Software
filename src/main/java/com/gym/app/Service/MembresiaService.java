@@ -43,7 +43,8 @@ public class MembresiaService {
         usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        Membresia miembro = membresiaRepository.findByIdUsuario(idUsuario)
+        Membresia miembro = membresiaRepository
+                .findByIdUsuarioAndIdGym(idUsuario, idGym)
                 .orElse(null);
 
         if (miembro == null){

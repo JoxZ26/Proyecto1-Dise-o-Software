@@ -102,17 +102,27 @@ public class RutinaService {
         usuarioRepository.findById(idMiembro)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        Membresia membresiaCoach = membresiaRepository.findByIdUsuario(coachId)
-                .orElseThrow(() -> new RuntimeException("El coach no tiene membresía en ningún gimnasio"));
+        Usuario coach = usuarioRepository.findById(coachId)
+                .orElseThrow(() -> new RuntimeException("Coach no encontrado"));
 
-        if (membresiaCoach.getRol() != Rol.COACH) {
-            throw new IllegalStateException("Solo un coach puede asignar rutinas a miembros del gym");
+        Membresia miembroCoach = membresiaRepository.findByIdUsuarioAndRol(coachId,Rol.COACH)
+                .orElseThrow(() -> new IllegalStateException("Coach no encontrado"));
+
+        List<Membresia> membresiasCoach = membresiaRepository.findByIdUsuario(coachId);
+        if (membresiasCoach.isEmpty()) {
+            throw new RuntimeException("El coach no tiene membresía en ningún gimnasio");
         }
 
-        Membresia membresiaMiembro = membresiaRepository.findByIdUsuario(idMiembro)
-                .orElseThrow(() -> new RuntimeException("El miembro no tiene membresía en ningún gimnasio"));
+        List<Membresia> membresiasCoach2 = membresiaRepository.findByIdUsuario(idMiembro);
+        if (membresiasCoach2.isEmpty()) {
+            throw new RuntimeException("El miembro no tiene membresía en ningún gimnasio");
+        }
 
-        if (!membresiaCoach.getIdGym().equals(membresiaMiembro.getIdGym())) {
+        boolean mismoGym = membresiasCoach.stream()
+                .anyMatch(mc -> membresiasCoach2.stream()
+                        .anyMatch(mm -> mc.getIdGym().equals(mm.getIdGym())));
+
+        if (!mismoGym) {
             throw new IllegalArgumentException("El miembro no pertenece al mismo gimnasio que el coach");
         }
 
@@ -157,8 +167,8 @@ public class RutinaService {
     }
 
     public RutinaEjercicio agregarEjercicioADia(Long idDia, Long idEjercicio,
-                                                 Integer sets, Integer reps,
-                                                 Integer descansoSegundos, String notas) {
+                                                Integer sets, Integer reps,
+                                                Integer descansoSegundos, String notas) {
         rutinaDiaRepository.findById(idDia)
                 .orElseThrow(() -> new RuntimeException("Día de rutina no encontrado"));
 
