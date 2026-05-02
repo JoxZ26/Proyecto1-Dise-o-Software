@@ -126,6 +126,9 @@ public class RutinaService {
             throw new IllegalArgumentException("El miembro no pertenece al mismo gimnasio que el coach");
         }
 
+        if (rutinaRepository.existsByNombreAndIdUsuario(rutina.getNombre(), idMiembro)) {
+            throw new IllegalStateException("El usuario ya tiene esta rutina asignada");
+        }
         Rutina nuevaRutina = new Rutina(idMiembro, rutina.getNombre(), rutina.getDescripcion(), false, coachId);
         nuevaRutina = rutinaRepository.save(nuevaRutina);
 

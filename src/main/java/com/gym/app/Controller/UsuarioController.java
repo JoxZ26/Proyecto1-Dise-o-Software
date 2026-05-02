@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.gym.app.Enum.Rol;
 
-@RestController //Esta clase escribe y responde peticiones HTTP
-@RequestMapping("/usuarios") //todas las rutas de este controller van con /usuarios
+@RestController
+@RequestMapping("/usuarios")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
@@ -18,16 +18,20 @@ public class UsuarioController {
         this.usuarioService = usuarioService;
     }
 
-    @PostMapping("/registrar") // este endpoint responde a POST /usuarios/registrar
+    @PostMapping("/registrar")
     public ResponseEntity<Usuario> registrar(@RequestBody UsuarioRequest request) {
-        Usuario usuario = usuarioService.registrar(request.correo(), request.password());
-        return ResponseEntity.ok(usuario);
+
+        return ResponseEntity.ok(
+                usuarioService.registrar(request.correo(), request.password())
+        );
     }
 
     @PostMapping("/login")
     public ResponseEntity<Usuario> login(@RequestBody UsuarioRequest request) {
-        Usuario usuario = usuarioService.login(request.correo(), request.password());
-        return ResponseEntity.ok(usuario);
+
+        return ResponseEntity.ok(
+                usuarioService.login(request.correo(), request.password())
+        );
     }
 
     @GetMapping("/buscar")
@@ -35,5 +39,5 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.buscar(correo));
     }
 
-    public record UsuarioRequest(String correo, String password, Rol rol) {} //mapear el JSON del request a un objeto Java
+    public record UsuarioRequest(String correo, String password, Rol rol) {}
 }
