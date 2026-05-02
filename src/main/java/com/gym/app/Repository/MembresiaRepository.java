@@ -4,9 +4,10 @@ import com.gym.app.Entity.Membresia;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;
+import java.util.List;
 
 @Repository
 public interface MembresiaRepository extends CrudRepository<Membresia, Long> {
     Optional<Membresia> findByIdUsuarioAndIdGym(Long idUsuario, Long idGym); //encontrar membresia por idUsuario e idGym
-    Optional<Membresia> findByIdUsuario(Long idUsuario);
+    List<Membresia> findByIdUsuario(Long idUsuario);
 }

@@ -20,11 +20,11 @@ public class UsuarioService {
         this.perfilRepository = perfilRepository;
     }
 
-    public Usuario registrar(String correo, String password) {
+    public Usuario registrar(String correo, String password, Rol rol) {
         if (usuarioRepository.findByCorreo(correo).isPresent()) {
             throw new RuntimeException("El correo ya está registrado"); //si el correo ya existe = error
         }
-        Usuario usuario = new Usuario(correo, password, Rol.MEMBER); //crear nuevo usuario
+        Usuario usuario = new Usuario(correo, password, rol != null ? rol : Rol.MEMBER);
         Usuario usuarioGuardado = usuarioRepository.save(usuario); // guardar
 
         Perfil perfil = new Perfil(); //crear perfil vacío para el nuevo usuario

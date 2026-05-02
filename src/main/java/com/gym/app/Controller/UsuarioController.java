@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import com.gym.app.Enum.Rol;
 
 @RestController //Esta clase escribe y responde peticiones HTTP
 @RequestMapping("/usuarios") //todas las rutas de este controller van con /usuarios
@@ -19,7 +20,7 @@ public class UsuarioController {
 
     @PostMapping("/registrar") // este endpoint responde a POST /usuarios/registrar
     public ResponseEntity<Usuario> registrar(@RequestBody UsuarioRequest request) {
-        Usuario usuario = usuarioService.registrar(request.correo(), request.password());
+        Usuario usuario = usuarioService.registrar(request.correo(), request.password(), request.rol());
         return ResponseEntity.ok(usuario);
     }
 
@@ -34,5 +35,5 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.buscar(correo));
     }
 
-    public record UsuarioRequest(String correo, String password) {} //mapear el JSON del request a un objeto Java
+    public record UsuarioRequest(String correo, String password, Rol rol) {} //mapear el JSON del request a un objeto Java
 }
