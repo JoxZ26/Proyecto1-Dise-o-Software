@@ -4,8 +4,7 @@ CREATE TABLE GYM.Usuario
 (
     id_usuario SERIAL PRIMARY KEY,
     correo     VARCHAR(100) UNIQUE NOT NULL,
-    password   VARCHAR(100)        NOT NULL,
-    rol        VARCHAR(20)         NOT NULL
+    password   VARCHAR(100)        NOT NULL
 );
 
 CREATE TABLE GYM.Perfil

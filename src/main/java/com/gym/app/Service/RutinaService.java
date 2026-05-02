@@ -105,9 +105,8 @@ public class RutinaService {
         Usuario coach = usuarioRepository.findById(coachId)
                 .orElseThrow(() -> new RuntimeException("Coach no encontrado"));
 
-        if (coach.getRol() != Rol.COACH) {
-            throw new IllegalStateException("Solo un coach puede asignar rutinas");
-        }
+        Membresia miembroCoach = membresiaRepository.findByIdUsuarioAndRol(coachId,Rol.COACH)
+                .orElseThrow(() -> new IllegalStateException("Coach no encontrado"));
 
         List<Membresia> membresiasCoach = membresiaRepository.findByIdUsuario(coachId);
         if (membresiasCoach.isEmpty()) {
@@ -168,8 +167,8 @@ public class RutinaService {
     }
 
     public RutinaEjercicio agregarEjercicioADia(Long idDia, Long idEjercicio,
-                                                 Integer sets, Integer reps,
-                                                 Integer descansoSegundos, String notas) {
+                                                Integer sets, Integer reps,
+                                                Integer descansoSegundos, String notas) {
         rutinaDiaRepository.findById(idDia)
                 .orElseThrow(() -> new RuntimeException("Día de rutina no encontrado"));
 

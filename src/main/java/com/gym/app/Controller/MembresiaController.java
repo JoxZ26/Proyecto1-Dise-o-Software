@@ -21,4 +21,14 @@ public class MembresiaController {
         Membresia membresia = membresiaService.unirseAGym(idUsuario, idGym);
         return ResponseEntity.ok(membresia);
     }
+
+    @PutMapping("/{idGym}/admin/{idAdmin}/coach/{idUsuario}")
+    public ResponseEntity<?> asignarCoach(@PathVariable Long idGym,
+                                          @PathVariable Long idAdmin,
+                                          @PathVariable Long idUsuario) {
+
+        membresiaService.asignarCoach(idAdmin, idUsuario, idGym);
+
+        return ResponseEntity.ok("Rol actualizado a COACH");
+    }
 }
