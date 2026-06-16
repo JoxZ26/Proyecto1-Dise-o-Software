@@ -26,14 +26,6 @@ public class UsuarioController {
         );
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<Usuario> login(@RequestBody UsuarioRequest request) {
-
-        return ResponseEntity.ok(
-                usuarioService.login(request.correo(), request.password())
-        );
-    }
-
     @GetMapping("/buscar")
     public ResponseEntity<List<Usuario>> buscar(@RequestParam String correo) {
         return ResponseEntity.ok(usuarioService.buscar(correo));

@@ -49,4 +49,9 @@ public class UsuarioService {
         }
         return usuarioRepository.findByCorreoContainingIgnoreCase(correo);
     }
+    public Usuario getUserId(Long idUsuario) {
+        return usuarioRepository.findById(idUsuario)
+                .orElseThrow(() ->
+                        new RuntimeException("Usuario no encontrado"));
+    }
 }

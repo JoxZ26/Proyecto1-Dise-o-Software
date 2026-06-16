@@ -4,6 +4,7 @@ import com.gym.app.DTO.LoginRequest;
 import com.gym.app.DTO.LoginResponse;
 import com.gym.app.Entity.Usuario;
 import com.gym.app.Security.JwtUtil;
+import com.gym.app.Security.SecurityUtils;
 import com.gym.app.Service.UsuarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
 
+
         Usuario usuario = usuarioService.login( //validar usuario y contraseña
                 request.correo(),
                 request.password()
@@ -41,17 +43,11 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserInfoResponse> me(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorizationHeader
-    ) {
-
-        String token = authorizationHeader.replace("Bearer ", "");
-
-        Long idUsuario = jwtUtil.extractUserId(token);
-        String correo = jwtUtil.extractCorreo(token);
-
+    public ResponseEntity<UserInfoResponse> me() {
+        Long idUsuario = SecurityUtils.getCurrentUserId();
+        Usuario usuario = usuarioService.getUserId(idUsuario);
         return ResponseEntity.ok(
-                new UserInfoResponse(idUsuario, correo)
+                new UserInfoResponse(usuario.getIdUsuario(), usuario.getCorreo())
         );
     }
 }

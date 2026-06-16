@@ -13,11 +13,14 @@ public class MembresiaService {
     private final MembresiaRepository membresiaRepository; //atributo del repositorio de la membresia
     private final GymRepository gymRepository; // atributo del repositorio del gimnasio
     private final UsuarioRepository usuarioRepository;
+    private final AuthService authService;
 
-    public MembresiaService(MembresiaRepository membresiaRepository, GymRepository gymRepository, UsuarioRepository usuarioRepository) {
+    public MembresiaService(MembresiaRepository membresiaRepository, GymRepository gymRepository, UsuarioRepository usuarioRepository,
+                            AuthService authService) {
         this.membresiaRepository = membresiaRepository;
         this.gymRepository = gymRepository;
         this.usuarioRepository = usuarioRepository;
+        this.authService = authService;
     }
 
     public Membresia unirseAGym(Long idUsuario, Long idGym) {
@@ -32,14 +35,7 @@ public class MembresiaService {
 
     public void asignarCoach(Long idAdmin, Long idUsuario, Long idGym) {
 
-        Membresia admin = membresiaRepository
-                .findByIdUsuarioAndIdGym(idAdmin, idGym)
-                .orElseThrow(() -> new RuntimeException("Admin no pertenece a este gym"));
-
-        if (admin.getRol() != Rol.ADMIN) {
-            throw new IllegalStateException("Solo un admin puede asignar coach");
-        }
-
+        authService.validarAdmin(idAdmin, idGym);
         usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
@@ -56,6 +52,5 @@ public class MembresiaService {
         }else{
             throw new IllegalStateException("El usuario ya es coach en este gym");
         }
-
     }
 }
