@@ -1,6 +1,7 @@
 package com.gym.app.Controller;
 
 import com.gym.app.Entity.Gym;
+import com.gym.app.Security.SecurityUtils;
 import com.gym.app.Service.GymService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +17,10 @@ public class GymController {
         this.gymService = gymService;
     }
 
-    @PostMapping("/{idUsuario}")
-    public ResponseEntity<Gym> crearGym(@PathVariable Long idUsuario,
-                                        @RequestBody GymRequest request) {
-        return ResponseEntity.ok(
-                gymService.crearGym(request.nombre(), request.descripcion(), request.logoUrl(), idUsuario)
+    @PostMapping
+    public ResponseEntity<Gym> crearGym(@RequestBody GymRequest request) {
+        Long idUsuario = SecurityUtils.getCurrentUserId();
+        return ResponseEntity.ok(gymService.crearGym(request.nombre(), request.descripcion(), request.logoUrl(), idUsuario)
         );
     }
 

@@ -1,6 +1,7 @@
 package com.gym.app.Controller;
 
 import com.gym.app.Entity.Medidas;
+import com.gym.app.Security.SecurityUtils;
 import com.gym.app.Service.MedidasService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +18,10 @@ public class MedidasController {
         this.medidasService = medidasService;
     }
 
-    @PostMapping("/{idUsuario}") // endpoint de POST para registrar un usuario
-    public ResponseEntity<Medidas> registrar(@PathVariable Long idUsuario,
-                                             @RequestBody MedidasRequest request) {
+    @PostMapping // endpoint de POST para registrar un usuario
+    public ResponseEntity<Medidas> registrar(@RequestBody MedidasRequest request) {
+
+        Long idUsuario = SecurityUtils.getCurrentUserId();
         Medidas medidas = medidasService.registrarMedidas(idUsuario, request.peso(),
                 request.biceps(), request.antebrazo(), request.pecho(), request.cintura(),
                 request.abdomen(), request.cadera(), request.muslo(),
@@ -27,8 +29,9 @@ public class MedidasController {
         return ResponseEntity.ok(medidas);
     }
 
-    @GetMapping("/{idUsuario}") //endpoint de GET para obtener el historial
-    public ResponseEntity<List<Medidas>> historial(@PathVariable Long idUsuario) {
+    @GetMapping //endpoint de GET para obtener el historial
+    public ResponseEntity<List<Medidas>> historial() {
+        Long idUsuario = SecurityUtils.getCurrentUserId();
         return ResponseEntity.ok(medidasService.obtenerHistorial(idUsuario));
     }
 
