@@ -2,6 +2,7 @@ package com.gym.app.Service;
 
 import com.gym.app.Entity.Membresia;
 import com.gym.app.Enum.Rol;
+import com.gym.app.Exception.AccesoProhibidoException;
 import com.gym.app.Repository.MembresiaRepository;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +39,7 @@ public class AuthService {
 
     public void validarAdmin(Long idUsuario, Long idGym) {
         if (!esAdmin(idUsuario, idGym)) {
-            throw new RuntimeException("Acceso denegado. Se requiere rol ADMIN");
+            throw new AccesoProhibidoException("Acceso denegado. Se requiere rol ADMIN");
         }
     }
 
@@ -54,7 +55,7 @@ public class AuthService {
                         .isPresent();
 
         if (!esCoach && !esAdmin) {
-            throw new IllegalStateException(
+            throw new AccesoProhibidoException(
                     "Solo un coach o administrador puede crear ejercicios"
             );
         }
@@ -63,7 +64,7 @@ public class AuthService {
     public void validarAsignarRutina(Long idUsuario){
         boolean esCoach = membresiaRepository.findByIdUsuarioAndRol(idUsuario, Rol.COACH).isPresent();
         if(!esCoach){
-            throw new IllegalStateException("Solo un coach puede asignar rutinas");
+            throw new AccesoProhibidoException("Solo un coach puede asignar rutinas");
         }
     }
 

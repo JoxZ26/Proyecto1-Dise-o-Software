@@ -1,11 +1,15 @@
 package com.gym.app.Service;
 
+import com.gym.app.DTO.MembresiaInfoResponse;
+import com.gym.app.Entity.Gym;
 import com.gym.app.Entity.Membresia;
 import com.gym.app.Enum.Rol;
 import com.gym.app.Repository.MembresiaRepository;
 import com.gym.app.Repository.GymRepository;
 import com.gym.app.Repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class MembresiaService {
@@ -31,6 +35,18 @@ public class MembresiaService {
         }
         Membresia membresia = new Membresia(idUsuario, idGym, Rol.MEMBER);
         return membresiaRepository.save(membresia); //guardar la membresía
+    }
+
+    // retorna la lista de membresías del usuario con el nombre del gym para cada una
+    public List<MembresiaInfoResponse> getMembresiasMeInfo(Long usuarioId) {
+        List<Membresia> membresias = membresiaRepository.findByIdUsuario(usuarioId);
+        return membresias.stream()
+                .map(m -> {
+                    Gym gym = gymRepository.findById(m.getIdGym())
+                            .orElseThrow(() -> new RuntimeException("Gimnasio no encontrado"));
+                    return new MembresiaInfoResponse(m.getIdGym(), gym.getNombre(), m.getRol());
+                })
+                .toList();
     }
 
     public void asignarCoach(Long idAdmin, Long idUsuario, Long idGym) {

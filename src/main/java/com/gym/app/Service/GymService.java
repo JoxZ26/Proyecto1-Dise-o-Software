@@ -43,4 +43,13 @@ public class GymService {
     public List<Gym> buscarGyms(String nombre) { //buscar gimnasio LIKE (SQL)
         return gymRepository.findByNombreContainingIgnoreCase(nombre);
     }
+
+    public Gym actualizarGym(Long idGym, String nombre, String descripcion, String logoUrl) {
+        Gym gym = gymRepository.findById(idGym)
+                .orElseThrow(() -> new RuntimeException("Gimnasio no encontrado"));
+        gym.setNombre(nombre);
+        gym.setDescripcion(descripcion);
+        gym.setLogoUrl(logoUrl);
+        return gymRepository.save(gym);
+    }
 }
