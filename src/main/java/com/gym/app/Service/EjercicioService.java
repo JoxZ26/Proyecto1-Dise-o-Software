@@ -9,6 +9,7 @@ import com.gym.app.Repository.MembresiaRepository;
 import com.gym.app.Repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -56,6 +57,12 @@ public class EjercicioService {
             throw new IllegalArgumentException("Nombre requerido");
         }
         return ejercicioRepository.findByNombreContainingIgnoreCase(nombre);
+    }
+
+    public List<Ejercicio> listarTodos() {
+        List<Ejercicio> lista = new ArrayList<>();
+        ejercicioRepository.findAll().forEach(lista::add);
+        return lista;
     }
 
 }
