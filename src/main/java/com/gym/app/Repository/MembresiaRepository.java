@@ -14,4 +14,5 @@ public interface MembresiaRepository extends CrudRepository<Membresia, Long> {
     Optional<Membresia> findByIdUsuarioAndIdGym(Long idUsuario, Long idGym); //encontrar membresia por idUsuario e idGym
     List<Membresia> findByIdUsuario(Long idUsuario);
     Optional<Membresia> findByIdUsuarioAndRol(Long idUsuario, Rol rol);
+    List<Membresia> findByIdGym(Long idGym);
 }

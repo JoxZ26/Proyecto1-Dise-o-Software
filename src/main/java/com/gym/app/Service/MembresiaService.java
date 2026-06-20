@@ -44,7 +44,7 @@ public class MembresiaService {
                 .map(m -> {
                     Gym gym = gymRepository.findById(m.getIdGym())
                             .orElseThrow(() -> new RuntimeException("Gimnasio no encontrado"));
-                    return new MembresiaInfoResponse(m.getIdGym(), gym.getNombre(), m.getRol());
+                    return new MembresiaInfoResponse(m.getIdGym(), gym.getNombre(), m.getRol(), gym.getLogoUrl(), gym.getDescripcion());
                 })
                 .toList();
     }
@@ -68,5 +68,15 @@ public class MembresiaService {
         }else{
             throw new IllegalStateException("El usuario ya es coach en este gym");
         }
+    }
+
+    public void salirDeGym(Long idUsuario, Long idGym){
+        Membresia membresia = membresiaRepository.findByIdUsuarioAndIdGym(idUsuario, idGym)
+                .orElseThrow(() -> new RuntimeException("No eres miembro de este gymnasio"));
+        if (membresia.getRol() == Rol.ADMIN) {
+            throw new IllegalStateException("El administrador no puede abandonar su propio gimnasio");
+        }
+
+        membresiaRepository.delete(membresia);
     }
 }

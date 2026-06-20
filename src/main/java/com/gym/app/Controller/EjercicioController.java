@@ -39,6 +39,11 @@ public class EjercicioController {
         return ResponseEntity.ok(ejercicioService.buscar(nombre));
     }
 
+    @GetMapping
+    public ResponseEntity<List<Ejercicio>> listar() {
+        return ResponseEntity.ok(ejercicioService.listarTodos());
+    }
+
     public record CrearEjercicioRequest(
             String nombre,
             String grupoMuscular,

@@ -1,6 +1,8 @@
 package com.gym.app.Controller;
 
+import com.gym.app.DTO.MiembroGymResponse;
 import com.gym.app.Entity.Gym;
+import com.gym.app.DTO.UserInfoResponse;
 import com.gym.app.Security.SecurityUtils;
 import com.gym.app.Service.AuthService;
 import com.gym.app.Service.GymService;
@@ -38,6 +40,11 @@ public class GymController {
         Long idUsuario = SecurityUtils.getCurrentUserId();
         authService.validarAdmin(idUsuario, idGym);
         return ResponseEntity.ok(gymService.actualizarGym(idGym, request.nombre(), request.descripcion(), request.logoUrl()));
+    }
+
+    @GetMapping("/{idGym}/usuarios")
+    public ResponseEntity<List<MiembroGymResponse>> obtenerUsuariosGym(@PathVariable Long idGym){
+        return ResponseEntity.ok(gymService.obtenerUsuariosGym(idGym));
     }
 
     public record GymRequest(String nombre, String descripcion, String logoUrl) {} //mapear el JSON del request a un objeto de Java

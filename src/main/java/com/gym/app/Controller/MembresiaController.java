@@ -33,4 +33,12 @@ public class MembresiaController {
 
         return ResponseEntity.ok("Rol actualizado a COACH");
     }
+
+    @DeleteMapping("/gym/{idGym}")
+    public ResponseEntity<String> salir(@PathVariable Long idGym) {
+        Long idUsuario = SecurityUtils.getCurrentUserId();
+        membresiaService.salirDeGym(idUsuario, idGym);
+        return ResponseEntity.ok("Saliste del gimnasio");
+    }
 }
+
