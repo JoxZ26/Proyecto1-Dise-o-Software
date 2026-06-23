@@ -12,6 +12,8 @@ import MiembrosPage from './pages/MiembrosPage';
 import RutinasPage from './pages/RutinasPage';
 import EjercicioCatalogoPage from './pages/EjercicioCatalogoPage';
 import MedidasPage from './pages/MedidasPage';
+import MiRutinaPage from './pages/MiRutinaPage';
+import GestionarRutinasPage from './pages/GestionarRutinasPage';
 
 function App() {
     return (
@@ -30,12 +32,15 @@ function App() {
                     <Route path="/" element={<HomePage />} />
                     <Route path="/gym/:id" element={<GymPage />} />
                     <Route path="/gym/:id/administrar" element={<AdminGymPage />} />
-                    <Route path="/gym/:id/rutinas" element={<RutinasPage />} />
+                    <Route path="/gym/:id/rutinas" element={<GestionarRutinasPage />} />
+                    <Route path="/gym/:id/rutinas/crear" element={<RutinasPage />} />
+                    <Route path="/crear-rutina" element={<RutinasPage />} />
                     <Route path="/gym/:id/miembros" element={<MiembrosPage />} />
                     <Route path="/gym/:id/medidas" element={<MedidasPage />} />
                     <Route path="/gym/:id/ejercicios" element={<EjercicioCatalogoPage />} />
                     <Route path="/buscar" element={<BuscarGymsPage />} />
                     <Route path="/perfil" element={<PerfilPage />} />
+                    <Route path="/mi-rutina" element={<MiRutinaPage />} />
                 </Route>
 
                 <Route path="*" element={<Navigate to="/" replace />} />

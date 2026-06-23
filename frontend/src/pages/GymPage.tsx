@@ -13,16 +13,14 @@ type Membresia = {
 const seccionesPorRol: Record<string, { label: string; to: string }[]> = {
     ADMIN: [
         { label: 'Administrar gimnasio', to: 'administrar' },
-        { label: 'Gestionar rutinas', to: 'rutinas' },
         { label: 'Ver miembros', to: 'miembros' },
         { label: 'Catálogo de ejercicios', to: 'ejercicios' },
     ],
     COACH: [
-        { label: 'Mis rutinas asignadas', to: 'rutinas' },
+        { label: 'Gestionar rutinas', to: 'rutinas' },
         { label: 'Catálogo de ejercicios', to: 'ejercicios' },
     ],
     MEMBER: [
-        { label: 'Mi rutina', to: 'mi-rutina' },
         { label: 'Mis medidas', to: 'medidas' },
     ],
 };
