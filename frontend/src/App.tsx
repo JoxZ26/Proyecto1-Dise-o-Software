@@ -14,9 +14,28 @@ import EjercicioCatalogoPage from './pages/EjercicioCatalogoPage';
 import MedidasPage from './pages/MedidasPage';
 import MiRutinaPage from './pages/MiRutinaPage';
 import GestionarRutinasPage from './pages/GestionarRutinasPage';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
     return (
+      <>
+        <ToastContainer
+          position="top-right"
+          autoClose={3500}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          pauseOnFocusLoss={false}
+          draggable
+          pauseOnHover
+          theme="dark"
+          style={{ zIndex: 99999 }}
+          toastStyle={{
+            width: "550px",
+            minHeight: "125px",
+            fontSize: "16px",
+          }}
+        />
         <BrowserRouter>
             <Routes>
                 <Route path="/login" element={<LoginPage />} />
@@ -46,6 +65,7 @@ function App() {
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </BrowserRouter>
+      </>
     );
 }
 

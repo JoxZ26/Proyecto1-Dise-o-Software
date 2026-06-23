@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { api } from '../lib/api';
+import { toast } from 'react-toastify';
 
 type Gym = { idGym: number; nombre: string; descripcion: string; logoUrl: string };
 
@@ -28,7 +29,7 @@ export default function BuscarGymsPage() {
         setUniendo(idGym);
         try {
             await api.post(`/membresia/gym/${idGym}`, {});
-            alert('Te uniste al gimnasio correctamente');
+            toast.success('Te uniste al gimnasio correctamente');
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Error al unirse');
         } finally {

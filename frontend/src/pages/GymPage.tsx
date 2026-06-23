@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { api } from '../lib/api';
+import Swal from 'sweetalert2'
 
 type Membresia = {
     gymId: number;
@@ -52,12 +53,36 @@ export default function GymPage() {
     }, [id]);
 
     const abandonar = async () => {
-        if (!confirm('¿Seguro que quieres abandonar este gimnasio?')) return;
+        const result = await Swal.fire({
+            title: '¿Seguro que quieres abandonar este gimnasio?',
+            theme: 'dark',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, abandonar',
+            cancelButtonText: 'Cancelar',
+        });
+
+        if (!result.isConfirmed) return;
+
         try {
             await api.del(`/membresia/gym/${id}`);
+            await Swal.fire({
+            title: '¡Listo!',
+            theme: 'dark',
+            text: 'Has abandonado el gimnasio',
+            icon: 'success',
+            confirmButtonText: 'Aceptar',
+            });
             navigate('/');
         } catch (err) {
-            alert(err instanceof Error ? err.message : 'Error al abandonar el gimnasio');
+            Swal.fire({
+            title: 'Error',
+            theme: 'dark',
+            text: err instanceof Error ? err.message : 'Error al abandonar el gimnasio',
+            icon: 'error',
+            confirmButtonText: 'Aceptar',
+            });
         }
     };
 
