@@ -100,6 +100,12 @@ public class RutinaController {
         return ResponseEntity.ok(rutinaService.buscar(nombre));
     }
 
+    @GetMapping("/mias")
+    public ResponseEntity<List<RutinaCompleta>> misRutinas() {
+        Long idUsuario = SecurityUtils.getCurrentUserId();
+        return ResponseEntity.ok(rutinaService.obtenerMisRutinas(idUsuario));
+    }
+
     public record AgregarEjercicioRequest(
             Long idEjercicio,
             Integer sets,

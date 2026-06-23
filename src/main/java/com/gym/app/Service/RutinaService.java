@@ -196,4 +196,21 @@ public class RutinaService {
         return rutinaRepository.findByNombreContainingIgnoreCase(nombre);
     }
 
+    public List<RutinaCompleta> obtenerMisRutinas(Long idUsuario) {
+        List<Rutina> rutinas = rutinaRepository.findByIdUsuario(idUsuario);
+        List<RutinaCompleta> resultado = new ArrayList<>();
+
+        for (Rutina rutina : rutinas) {
+            List<RutinaDia> dias = rutinaDiaRepository.findByIdRutina(rutina.getIdRutina());
+            List<DiaConEjercicios> diasConEjercicios = new ArrayList<>();
+
+            for (RutinaDia dia : dias) {
+                List<RutinaEjercicio> ejercicios = rutinaEjercicioRepository.findByIdDia(dia.getIdRutinaDia());
+                diasConEjercicios.add(new DiaConEjercicios(dia, ejercicios));
+            }
+            resultado.add(new RutinaCompleta(rutina, diasConEjercicios));
+        }
+        return resultado;
+    }
+
 }

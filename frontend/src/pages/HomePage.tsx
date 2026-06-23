@@ -132,7 +132,6 @@ export default function HomePage() {
                 <div className="flex items-center justify-center min-h-[70vh]">
                     <div className="card bg-base-100 border border-base-300 shadow-xl max-w-md w-full">
                         <div className="card-body items-center text-center gap-4 p-10">
-                            <div className="text-6xl">🏋️</div>
                             <h2 className="text-2xl font-bold">Aún no tienes gimnasios</h2>
                             <p className="opacity-60">
                                 Únete a un gimnasio existente o crea el tuyo y conviértete en su administrador.

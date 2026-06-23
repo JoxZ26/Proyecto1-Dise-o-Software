@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 const links = [
     { to: '/', label: 'Mis gimnasios' },
     { to: '/buscar', label: 'Buscar gimnasios' },
+    { to: '/mi-rutina', label: 'Mi rutina' },
     { to: '/perfil', label: 'Perfil' },
 ];
 
