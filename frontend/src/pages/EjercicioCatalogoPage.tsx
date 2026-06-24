@@ -104,7 +104,6 @@ export default function EjercicioCatalogoPage() {
                     <div className="flex items-center justify-center min-h-[50vh]">
                         <div className="card bg-base-100 border border-base-300 shadow-xl max-w-md w-full">
                             <div className="card-body items-center text-center gap-4 p-10">
-                                <div className="text-6xl">💪</div>
                                 <h3 className="text-2xl font-bold">Aún no hay ejercicios</h3>
                                 <p className="opacity-60">
                                     {puedeCrear
