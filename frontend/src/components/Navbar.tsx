@@ -5,6 +5,7 @@ const links = [
     { to: '/', label: 'Mis gimnasios' },
     { to: '/buscar', label: 'Buscar gimnasios' },
     { to: '/mi-rutina', label: 'Mi rutina' },
+    { to: '/ejercicios', label: 'Catálogo' },
     { to: '/perfil', label: 'Perfil' },
 ];
 

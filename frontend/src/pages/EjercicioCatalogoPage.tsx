@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { api } from '../lib/api';
 
 type Ejercicio = {
@@ -12,7 +12,6 @@ type Ejercicio = {
 };
 
 export default function EjercicioCatalogoPage() {
-    const { id } = useParams();
     const [ejercicios, setEjercicios] = useState<Ejercicio[]>([]);
     const [filtro, setFiltro] = useState('');
     const [loading, setLoading] = useState(true);
@@ -22,6 +21,7 @@ export default function EjercicioCatalogoPage() {
     const [form, setForm] = useState({ nombre: '', grupoMuscular: '', descripcion: '', imagenUrl: '', videoUrl: '' });
     const [creando, setCreando] = useState(false);
     const [errorCrear, setErrorCrear] = useState('');
+    const [puedeCrear, setPuedeCrear] = useState(false);
 
     const cargar = () => {
         setLoading(true);
@@ -33,7 +33,16 @@ export default function EjercicioCatalogoPage() {
     };
 
     useEffect(() => {
-        cargar();
+        Promise.all([
+            api.get<Ejercicio[]>('/ejercicios'),
+            api.get<{ rol: 'MEMBER' | 'COACH' | 'ADMIN' }[]>('/usuarios/me/membresias'),
+        ])
+            .then(([ejs, mems]) => {
+                setEjercicios(ejs);
+                setPuedeCrear(mems.some((m) => m.rol === 'COACH' || m.rol === 'ADMIN'));
+            })
+            .catch((err) => setError(err instanceof Error ? err.message : 'Error al cargar ejercicios'))
+            .finally(() => setLoading(false));
     }, []);
 
     const crear = async (e: React.FormEvent) => {
@@ -63,13 +72,15 @@ export default function EjercicioCatalogoPage() {
 
     return (
         <div className="flex flex-col gap-6">
-            <Link to={`/gym/${id}`} className="btn btn-ghost btn-sm w-fit">← Volver al gimnasio</Link>
+            <Link to="/" className="btn btn-ghost btn-sm w-fit">← Mis gimnasios</Link>
 
             <div className="flex items-center justify-between flex-wrap gap-3">
                 <h2 className="text-3xl font-bold">Catálogo de ejercicios</h2>
-                <button className="btn btn-primary" onClick={() => setModalAbierto(true)}>
-                    + Crear ejercicio
-                </button>
+                {puedeCrear && (
+                    <button className="btn btn-primary" onClick={() => setModalAbierto(true)}>
+                        + Crear ejercicio
+                    </button>
+                )}
             </div>
 
             <input
@@ -93,13 +104,18 @@ export default function EjercicioCatalogoPage() {
                     <div className="flex items-center justify-center min-h-[50vh]">
                         <div className="card bg-base-100 border border-base-300 shadow-xl max-w-md w-full">
                             <div className="card-body items-center text-center gap-4 p-10">
+                                <div className="text-6xl">💪</div>
                                 <h3 className="text-2xl font-bold">Aún no hay ejercicios</h3>
                                 <p className="opacity-60">
-                                    Crea el primer ejercicio del catálogo para poder armar rutinas con él.
+                                    {puedeCrear
+                                        ? 'Crea el primer ejercicio del catálogo para poder armar rutinas con él.'
+                                        : 'Todavía no hay ejercicios en el catálogo.'}
                                 </p>
-                                <button className="btn btn-primary btn-lg mt-2" onClick={() => setModalAbierto(true)}>
-                                    + Crear ejercicio
-                                </button>
+                                {puedeCrear && (
+                                    <button className="btn btn-primary btn-lg mt-2" onClick={() => setModalAbierto(true)}>
+                                        + Crear ejercicio
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
