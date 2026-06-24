@@ -56,8 +56,8 @@ function App() {
                     <Route path="/crear-rutina" element={<RutinasPage />} />
                     <Route path="/gym/:id/miembros" element={<MiembrosPage />} />
                     <Route path="/gym/:id/medidas" element={<MedidasPage />} />
-                    <Route path="/gym/:id/ejercicios" element={<EjercicioCatalogoPage />} />
                     <Route path="/buscar" element={<BuscarGymsPage />} />
+                    <Route path="/ejercicios" element={<EjercicioCatalogoPage />} />
                     <Route path="/perfil" element={<PerfilPage />} />
                     <Route path="/mi-rutina" element={<MiRutinaPage />} />
                 </Route>

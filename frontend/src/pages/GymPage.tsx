@@ -15,11 +15,9 @@ const seccionesPorRol: Record<string, { label: string; to: string }[]> = {
     ADMIN: [
         { label: 'Administrar gimnasio', to: 'administrar' },
         { label: 'Ver miembros', to: 'miembros' },
-        { label: 'Catálogo de ejercicios', to: 'ejercicios' },
     ],
     COACH: [
         { label: 'Gestionar rutinas', to: 'rutinas' },
-        { label: 'Catálogo de ejercicios', to: 'ejercicios' },
     ],
     MEMBER: [
         { label: 'Mis medidas', to: 'medidas' },

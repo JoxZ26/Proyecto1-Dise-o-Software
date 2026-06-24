@@ -34,13 +34,14 @@ export default function MiembrosPage() {
         cargar();
     }, [id]);
 
-    const promover = async (idUsuario: number) => {
+    const cambiarRol = async (idUsuario: number, aCoach: boolean) => {
         setPromoviendo(idUsuario);
         try {
-            await api.put(`/membresia/${id}/coach/${idUsuario}`, {});
-            cargar(); // refresca para que el rol pase a COACH y el botón desaparezca
+            const ruta = aCoach ? 'coach' : 'member';
+            await api.put(`/membresia/${id}/${ruta}/${idUsuario}`, {});
+            cargar(); // refresca para reflejar el nuevo rol
         } catch (err) {
-            alert(err instanceof Error ? err.message : 'Error al promover');
+            alert(err instanceof Error ? err.message : 'Error al cambiar el rol');
         } finally {
             setPromoviendo(null);
         }
@@ -88,9 +89,19 @@ export default function MiembrosPage() {
                                     <button
                                         className="btn btn-sm btn-secondary"
                                         disabled={promoviendo === m.idUsuario}
-                                        onClick={() => promover(m.idUsuario)}
+                                        onClick={() => cambiarRol(m.idUsuario, true)}
                                     >
-                                        {promoviendo === m.idUsuario ? 'Promoviendo...' : 'Promover a coach'}
+                                        {promoviendo === m.idUsuario ? '...' : 'Promover a coach'}
+                                    </button>
+                                )}
+
+                                {m.rol === 'COACH' && (
+                                    <button
+                                        className="btn btn-sm btn-outline"
+                                        disabled={promoviendo === m.idUsuario}
+                                        onClick={() => cambiarRol(m.idUsuario, false)}
+                                    >
+                                        {promoviendo === m.idUsuario ? '...' : 'Quitar coach'}
                                     </button>
                                 )}
                             </li>
