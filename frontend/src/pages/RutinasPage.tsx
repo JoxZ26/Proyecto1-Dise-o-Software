@@ -75,6 +75,11 @@ export default function RutinasPage() {
 
     const agregarEjercicio = async (e: React.FormEvent) => {
         e.preventDefault();
+        const s = num(ejForm.sets), r = num(ejForm.reps), d = num(ejForm.descansoSegundos);
+        if ((s != null && s < 1) || (r != null && r < 1) || (d != null && d < 0)) {
+            alert('Sets y reps deben ser al menos 1, y el descanso no puede ser negativo.');
+            return;
+        }
         if (diaActivo == null || !ejForm.idEjercicio) return;
         try {
             await api.post(`/rutinas/dias/${diaActivo}/ejercicios`, {
@@ -239,11 +244,11 @@ export default function RutinasPage() {
                                 ))}
                             </select>
                             <div className="grid grid-cols-3 gap-3">
-                                <input type="number" className="input input-bordered" placeholder="Sets"
+                                <input type="number" min="1" className="input input-bordered" placeholder="Sets"
                                        value={ejForm.sets} onChange={(e) => setEjForm((f) => ({ ...f, sets: e.target.value }))} />
-                                <input type="number" className="input input-bordered" placeholder="Reps"
+                                <input type="number" min="1" className="input input-bordered" placeholder="Reps"
                                        value={ejForm.reps} onChange={(e) => setEjForm((f) => ({ ...f, reps: e.target.value }))} />
-                                <input type="number" className="input input-bordered" placeholder="Descanso (s)"
+                                <input type="number" min="0" className="input input-bordered" placeholder="Descanso (s)"
                                        value={ejForm.descansoSegundos} onChange={(e) => setEjForm((f) => ({ ...f, descansoSegundos: e.target.value }))} />
                             </div>
                             <input className="input input-bordered w-full" placeholder="Notas (opcional)"

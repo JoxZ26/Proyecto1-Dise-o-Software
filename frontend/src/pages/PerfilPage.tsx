@@ -19,6 +19,12 @@ export default function PerfilPage() {
     const [error, setError] = useState('');
     const [ok, setOk] = useState('');
 
+    const hoy = new Date();
+    const maxFecha = new Date(hoy.getFullYear() - 13, hoy.getMonth(), hoy.getDate())
+        .toISOString().slice(0, 10); // al menos 13 años
+    const minFecha = new Date(hoy.getFullYear() - 100, hoy.getMonth(), hoy.getDate())
+        .toISOString().slice(0, 10); // máximo 100 años
+
     useEffect(() => {
         Promise.all([api.get<UserInfo>('/auth/me'), api.get<Perfil>('/perfil')])
             .then(([me, p]) => {
@@ -34,6 +40,13 @@ export default function PerfilPage() {
     const guardar = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!perfil) return;
+
+        const alt = perfil.altura, p = perfil.pesoInicial;
+        if ((alt != null && alt < 0) || (p != null && p < 0)) {
+            setError('La altura y el peso no pueden ser negativos.');
+            return;
+        }
+
         setError('');
         setOk('');
         try {
@@ -107,20 +120,27 @@ export default function PerfilPage() {
 
                             <div className="form-control">
                                 <label className="label"><span className="label-text">Fecha de nacimiento</span></label>
-                                <input type="date" className="input input-bordered input-lg w-full"
-                                       value={perfil.fechaNacimiento ?? ''} onChange={(e) => set('fechaNacimiento', e.target.value)} />
+                                <input
+                                    type="date"
+                                    className="input input-bordered input-lg w-full"
+                                    min={minFecha}
+                                    max={maxFecha}
+                                    value={perfil.fechaNacimiento ?? ''}
+                                    onChange={(e) => set('fechaNacimiento', e.target.value)}
+                                />
                             </div>
 
                             <div className="form-control">
                                 <label className="label"><span className="label-text">Altura (m)</span></label>
-                                <input type="number" step="0.01" className="input input-bordered input-lg w-full" placeholder="Altura (m)"
-                                       value={perfil.altura ?? ''} onChange={(e) => set('altura', e.target.value)} />
+                                <input type="number" step="0.01" min="0" max="3" className="input input-bordered input-lg w-full"
+                                       placeholder="Altura (m)" value={perfil.altura ?? ''} onChange={(e) => set('altura', e.target.value)} />
                             </div>
 
                             <div className="form-control">
                                 <label className="label"><span className="label-text">Peso inicial (kg)</span></label>
-                                <input type="number" step="0.01" className="input input-bordered input-lg w-full" placeholder="Peso inicial (kg)"
-                                       value={perfil.pesoInicial ?? ''} onChange={(e) => set('pesoInicial', e.target.value)} />
+                                {/* Peso inicial */}
+                                <input type="number" step="0.01" min="0" max="500" className="input input-bordered input-lg w-full"
+                                       placeholder="Peso inicial (kg)" value={perfil.pesoInicial ?? ''} onChange={(e) => set('pesoInicial', e.target.value)} />
                             </div>
                         </div>
 
