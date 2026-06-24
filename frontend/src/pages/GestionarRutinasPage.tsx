@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api } from '../lib/api';
+import Swal from 'sweetalert2';
 
 type Ejercicio = { idEjercicio: number; nombre: string; grupoMuscular: string };
 type EjEnDia = { idEjercicio: number; sets: number | null; reps: number | null; descansoSegundos: number | null; notas: string | null };
@@ -61,6 +62,26 @@ export default function GestionarRutinasPage() {
         }
     };
 
+    const eliminar = async (idRutina: number, nombre: string) => {
+        const r = await Swal.fire({
+            title: `¿Eliminar "${nombre}"?`,
+            theme: 'dark',
+            text: 'Esta acción no se puede deshacer.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+        });
+        if (!r.isConfirmed) return;
+        try {
+            await api.del(`/rutinas/${idRutina}`);
+            cargar();
+        } catch (err) {
+            Swal.fire({ title: 'Error', theme: 'dark', icon: 'error',
+                text: err instanceof Error ? err.message : 'Error al eliminar' });
+        }
+    };
+
     const nombreEj = (idEj: number) => catalogo[idEj]?.nombre ?? `Ejercicio #${idEj}`;
 
     if (loading) {
@@ -86,7 +107,6 @@ export default function GestionarRutinasPage() {
                 <div className="flex items-center justify-center min-h-[40vh]">
                     <div className="card bg-base-100 border border-base-300 shadow-xl max-w-md w-full">
                         <div className="card-body items-center text-center gap-4 p-10">
-                            <div className="text-6xl">📋</div>
                             <h3 className="text-2xl font-bold">No has creado rutinas</h3>
                             <p className="opacity-60">Crea una rutina para poder asignarla a tus miembros.</p>
                             <Link to={`/gym/${id}/rutinas/crear`} className="btn btn-primary btn-lg mt-2">+ Crear rutina</Link>
@@ -98,9 +118,17 @@ export default function GestionarRutinasPage() {
                     {rutinas.map(({ rutina, dias }) => (
                         <div key={rutina.idRutina} className="card bg-base-100 border border-base-300 shadow-lg">
                             <div className="card-body gap-4">
-                                <div>
-                                    <h3 className="text-2xl font-bold">{rutina.nombre}</h3>
-                                    {rutina.descripcion && <p className="opacity-70">{rutina.descripcion}</p>}
+                                <div className="flex items-start justify-between gap-3">
+                                    <div>
+                                        <h3 className="text-2xl font-bold">{rutina.nombre}</h3>
+                                        {rutina.descripcion && <p className="opacity-70">{rutina.descripcion}</p>}
+                                    </div>
+                                    <button
+                                        className="btn btn-sm btn-outline btn-error"
+                                        onClick={() => eliminar(rutina.idRutina, rutina.nombre)}
+                                    >
+                                        Eliminar
+                                    </button>
                                 </div>
 
                                 <div className="flex flex-col gap-3">

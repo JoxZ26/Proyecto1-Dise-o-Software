@@ -16,16 +16,16 @@ type Medida = {
     fecha: string | null;
 };
 
-const campos: { key: keyof Medida; label: string }[] = [
-    { key: 'peso', label: 'Peso (kg)' },
-    { key: 'biceps', label: 'Bíceps (cm)' },
-    { key: 'antebrazo', label: 'Antebrazo (cm)' },
-    { key: 'pecho', label: 'Pecho (cm)' },
-    { key: 'cintura', label: 'Cintura (cm)' },
-    { key: 'abdomen', label: 'Abdomen (cm)' },
-    { key: 'cadera', label: 'Cadera (cm)' },
-    { key: 'muslo', label: 'Muslo (cm)' },
-    { key: 'pantorrilla', label: 'Pantorrilla (cm)' },
+const campos: { key: keyof Medida; label: string; min: number; max: number }[] = [
+    { key: 'peso', label: 'Peso (kg)', min: 20, max: 500 },
+    { key: 'biceps', label: 'Bíceps (cm)', min: 10, max: 100 },
+    { key: 'antebrazo', label: 'Antebrazo (cm)', min: 10, max: 80 },
+    { key: 'pecho', label: 'Pecho (cm)', min: 40, max: 200 },
+    { key: 'cintura', label: 'Cintura (cm)', min: 40, max: 200 },
+    { key: 'abdomen', label: 'Abdomen (cm)', min: 40, max: 200 },
+    { key: 'cadera', label: 'Cadera (cm)', min: 40, max: 200 },
+    { key: 'muslo', label: 'Muslo (cm)', min: 20, max: 120 },
+    { key: 'pantorrilla', label: 'Pantorrilla (cm)', min: 15, max: 80 },
 ];
 
 const hoy = () => new Date().toISOString().slice(0, 10);
@@ -164,9 +164,15 @@ export default function MedidasPage() {
                                 {campos.map((c) => (
                                     <div key={c.key} className="form-control">
                                         <label className="label py-1"><span className="label-text text-sm">{c.label}</span></label>
-                                        <input type="number" step="0.1" className="input input-bordered input-sm w-full"
-                                               value={(form as Record<string, string>)[c.key]}
-                                               onChange={(e) => set(c.key, e.target.value)} />
+                                        <input
+                                            type="number"
+                                            step="0.1"
+                                            min={c.min}
+                                            max={c.max}
+                                            className="input input-bordered input-sm w-full"
+                                            value={(form as Record<string, string>)[c.key]}
+                                            onChange={(e) => set(c.key, e.target.value)}
+                                        />
                                     </div>
                                 ))}
                             </div>
