@@ -1,6 +1,8 @@
 package com.gym.app.Controller;
 
 import com.gym.app.Entity.Ejercicio;
+import com.gym.app.Security.SecurityUtils;
+import com.gym.app.Service.AuthService;
 import com.gym.app.Service.EjercicioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +19,9 @@ public class EjercicioController {
         this.ejercicioService = ejercicioService;
     }
 
-    @PostMapping("/{idUsuario}")
-    public ResponseEntity<Ejercicio> crearEjercicio(
-            @RequestBody CrearEjercicioRequest request,
-            @PathVariable Long idUsuario) {
-
+    @PostMapping
+    public ResponseEntity<Ejercicio> crearEjercicio(@RequestBody CrearEjercicioRequest request) {
+        Long idUsuario = SecurityUtils.getCurrentUserId();
         Ejercicio ejercicio = new Ejercicio();
         ejercicio.setNombre(request.nombre());
         ejercicio.setGrupoMuscular(request.grupoMuscular());
@@ -37,6 +37,11 @@ public class EjercicioController {
     @GetMapping("/buscar")
     public ResponseEntity<List<Ejercicio>> buscar(@RequestParam String nombre) {
         return ResponseEntity.ok(ejercicioService.buscar(nombre));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Ejercicio>> listar() {
+        return ResponseEntity.ok(ejercicioService.listarTodos());
     }
 
     public record CrearEjercicioRequest(

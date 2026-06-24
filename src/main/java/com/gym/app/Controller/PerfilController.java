@@ -1,6 +1,7 @@
 package com.gym.app.Controller;
 
 import com.gym.app.Entity.Perfil;
+import com.gym.app.Security.SecurityUtils;
 import com.gym.app.Service.PerfilService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +17,16 @@ public class PerfilController {
         this.perfilService = perfilService;
     }
 
-    @GetMapping("/{idUsuario}") //endpoint de GET para obtener mediante ID de usuario el perfil
-    public ResponseEntity<Perfil> obtenerPerfil(@PathVariable Long idUsuario) {
+    @GetMapping //endpoint de GET para obtener mediante ID de usuario el perfil
+    public ResponseEntity<Perfil> obtenerPerfil() {
+        Long idUsuario = SecurityUtils.getCurrentUserId();
         Perfil perfil = perfilService.obtenerPerfil(idUsuario);
         return ResponseEntity.ok(perfil);
     }
 
-    @PutMapping("/{idUsuario}") //endpoint de PUT para actualizar el perfil mediante ID de usuario, recibe un JSON con los datos a actualizar
-    public ResponseEntity<Perfil> actualizarPerfil(@PathVariable Long idUsuario,
-                                                   @RequestBody PerfilRequest request) {
+    @PutMapping //endpoint de PUT para actualizar el perfil mediante ID de usuario, recibe un JSON con los datos a actualizar
+    public ResponseEntity<Perfil> actualizarPerfil(@RequestBody PerfilRequest request) {
+        Long idUsuario = SecurityUtils.getCurrentUserId();
         Perfil perfil = perfilService.actualizarPerfil(idUsuario, request.nombre(),
                 request.apellido1(), request.apellido2(), request.fechaNacimiento(),
                 request.altura(), request.pesoInicial(), request.fotoUrl());

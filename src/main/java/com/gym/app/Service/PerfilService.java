@@ -19,7 +19,11 @@ public class PerfilService {
                                    String apellido2, LocalDate fechaNacimiento,
                                    Double altura, Double pesoInicial, String fotoUrl) {
         Perfil perfil = perfilRepository.findByIdUsuario(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Perfil no encontrado"));
+                .orElseGet(() -> {
+                    Perfil nuevo = new Perfil();
+                    nuevo.setIdUsuario(idUsuario);
+                    return nuevo;
+                });
         perfil.setNombre(nombre);
         perfil.setApellido1(apellido1);
         perfil.setApellido2(apellido2);
@@ -32,6 +36,10 @@ public class PerfilService {
 
     public Perfil obtenerPerfil(Long idUsuario) {
         return perfilRepository.findByIdUsuario(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Perfil no encontrado"));
-    } //función para obtener el perfil, llama al repositorio para buscar el perfil por ID de usuario y devuelve el perfil encontrado o lanza una excepción si no se encuentra
+                .orElseGet(() -> {
+                    Perfil nuevo = new Perfil();
+                    nuevo.setIdUsuario(idUsuario);
+                    return perfilRepository.save(nuevo);
+                });
+    }//función para obtener el perfil, llama al repositorio para buscar el perfil por ID de usuario y devuelve el perfil encontrado o lanza una excepción si no se encuentra
 }

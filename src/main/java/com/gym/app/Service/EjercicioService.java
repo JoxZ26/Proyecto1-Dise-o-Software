@@ -9,6 +9,7 @@ import com.gym.app.Repository.MembresiaRepository;
 import com.gym.app.Repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,20 +17,21 @@ public class EjercicioService {
     private final EjercicioRepository ejercicioRepository; //atributo para el repositorio de Ejercicio.
     private final MembresiaRepository membresiaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final AuthService authService;
 
-    public EjercicioService(EjercicioRepository ejercicioRepository, MembresiaRepository membresiaRepository, UsuarioRepository usuarioRepository) {
+    public EjercicioService(EjercicioRepository ejercicioRepository, MembresiaRepository membresiaRepository, UsuarioRepository usuarioRepository,
+                            AuthService authService) {
 
         this.ejercicioRepository = ejercicioRepository;
         this.membresiaRepository = membresiaRepository;
         this.usuarioRepository = usuarioRepository;
+        this.authService = authService;
     }
 
     public Ejercicio crearEjercicio(Ejercicio ejercicio, Long idUsuario) {
-        usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        membresiaRepository.findByIdUsuarioAndRol(idUsuario, Rol.COACH)
-                .orElseThrow(() -> new IllegalStateException("Solo un coach puede crear ejercicios"));
+        usuarioRepository.findById(idUsuario).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        authService.validarPuedeCrearEjercicio(idUsuario);
 
         if (ejercicio.getNombre() == null || ejercicio.getNombre().isBlank()) {
             throw new IllegalArgumentException("Nombre es obligatorio");
@@ -56,4 +58,11 @@ public class EjercicioService {
         }
         return ejercicioRepository.findByNombreContainingIgnoreCase(nombre);
     }
+
+    public List<Ejercicio> listarTodos() {
+        List<Ejercicio> lista = new ArrayList<>();
+        ejercicioRepository.findAll().forEach(lista::add);
+        return lista;
+    }
+
 }

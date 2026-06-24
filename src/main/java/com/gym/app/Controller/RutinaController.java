@@ -4,6 +4,7 @@ import com.gym.app.DTO.RutinaCompleta;
 import com.gym.app.Entity.Rutina;
 import com.gym.app.Entity.RutinaDia;
 import com.gym.app.Entity.RutinaEjercicio;
+import com.gym.app.Security.SecurityUtils;
 import com.gym.app.Service.RutinaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +21,9 @@ public class RutinaController {
         this.rutinaService = rutinaService;
     }
 
-    @PostMapping("/{idUsuario}")
-    public ResponseEntity<Rutina> crearRutina(
-            @PathVariable Long idUsuario,
-            @RequestBody CrearRutinaRequest request) {
-
+    @PostMapping
+    public ResponseEntity<Rutina> crearRutina(@RequestBody CrearRutinaRequest request) {
+        Long idUsuario = SecurityUtils.getCurrentUserId();
         Rutina rutina = new Rutina();
         rutina.setIdUsuario(idUsuario);
         rutina.setNombre(request.nombre());
@@ -37,26 +36,31 @@ public class RutinaController {
 
     public record CrearRutinaRequest(String nombre, String descripcion) {}
 
-    @GetMapping("/activas/{idUsuario}")
-    public ResponseEntity<List<RutinaCompleta>> obtenerActivas(@PathVariable Long idUsuario) {
+    @GetMapping("/activas")
+    public ResponseEntity<List<RutinaCompleta>> obtenerActivas() {
+        Long idUsuario = SecurityUtils.getCurrentUserId();
         return ResponseEntity.ok(rutinaService.obtenerRutinasActivas(idUsuario));
     }
 
     @PutMapping("/{idRutina}/activar")
     public ResponseEntity<Rutina> activar(@PathVariable Long idRutina) {
-        return ResponseEntity.ok(rutinaService.activarRutina(idRutina));
+
+        Long idUsuario = SecurityUtils.getCurrentUserId();
+        return ResponseEntity.ok(rutinaService.activarRutina(idRutina, idUsuario)
+        );
     }
 
     @PutMapping("/{idRutina}/desactivar")
     public ResponseEntity<Rutina> desactivar(@PathVariable Long idRutina) {
-        return ResponseEntity.ok(rutinaService.desactivarRutina(idRutina));
+        Long idUsuario = SecurityUtils.getCurrentUserId();
+        return ResponseEntity.ok(rutinaService.desactivarRutina(idRutina, idUsuario)
+        );
     }
 
-    @PutMapping("/{idRutina}/asignar/{idMiembro}/{idCoach}")
-    public ResponseEntity<Rutina> asignarAMiembro(@PathVariable Long idRutina,
-                                                  @PathVariable Long idMiembro,
-                                                  @PathVariable Long idCoach) {
+    @PutMapping("/{idRutina}/asignar/{idMiembro}")
+    public ResponseEntity<Rutina> asignarAMiembro(@PathVariable Long idRutina, @PathVariable Long idMiembro) {
 
+        Long idCoach = SecurityUtils.getCurrentUserId();
         return ResponseEntity.ok(
                 rutinaService.asignarRutinaAMiembro(idRutina, idMiembro, idCoach)
         );
@@ -94,6 +98,12 @@ public class RutinaController {
     @GetMapping("/buscar")
     public ResponseEntity<List<Rutina>> buscar(@RequestParam String nombre) {
         return ResponseEntity.ok(rutinaService.buscar(nombre));
+    }
+
+    @GetMapping("/mias")
+    public ResponseEntity<List<RutinaCompleta>> misRutinas() {
+        Long idUsuario = SecurityUtils.getCurrentUserId();
+        return ResponseEntity.ok(rutinaService.obtenerMisRutinas(idUsuario));
     }
 
     public record AgregarEjercicioRequest(

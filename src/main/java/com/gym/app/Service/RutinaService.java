@@ -24,19 +24,22 @@ public class RutinaService {
     private final UsuarioRepository usuarioRepository;
     private final EjercicioRepository ejercicioRepository;
     private final MembresiaRepository membresiaRepository;
+    private final AuthService authService;
 
     public RutinaService(RutinaRepository rutinaRepository,
                          RutinaDiaRepository rutinaDiaRepository,
                          RutinaEjercicioRepository rutinaEjercicioRepository,
                          UsuarioRepository usuarioRepository,
                          EjercicioRepository ejercicioRepository,
-                         MembresiaRepository membresiaRepository) {
+                         MembresiaRepository membresiaRepository,
+                         AuthService authService) {
         this.rutinaRepository = rutinaRepository;
         this.rutinaDiaRepository = rutinaDiaRepository;
         this.rutinaEjercicioRepository = rutinaEjercicioRepository;
         this.usuarioRepository = usuarioRepository;
         this.ejercicioRepository = ejercicioRepository;
         this.membresiaRepository = membresiaRepository;
+        this.authService = authService;
     }
 
     public Rutina crearRutina(Rutina rutina){
@@ -79,18 +82,24 @@ public class RutinaService {
         return resultado;
     }
 
-    public Rutina activarRutina(Long idRutina) {
+    public Rutina activarRutina(Long idRutina, Long idUsuario) {
         Rutina rutina = rutinaRepository.findById(idRutina)
                 .orElseThrow(() -> new RuntimeException("Rutina no encontrada"));
 
+        if (!rutina.getIdUsuario().equals(idUsuario)){
+            throw new IllegalStateException("No puede activar una rutina que no le pertenece");
+        }
         rutina.setActivo(true);
         return rutinaRepository.save(rutina);
     }
 
-    public Rutina desactivarRutina(Long idRutina) {
+    public Rutina desactivarRutina(Long idRutina, Long idUsuario) {
         Rutina rutina = rutinaRepository.findById(idRutina)
                 .orElseThrow(() -> new RuntimeException("Rutina no encontrada"));
 
+        if (!rutina.getIdUsuario().equals(idUsuario)){
+            throw new IllegalStateException("No puede desactivar una rutina que no le pertenece");
+        }
         rutina.setActivo(false);
         return rutinaRepository.save(rutina);
     }
@@ -105,8 +114,7 @@ public class RutinaService {
         Usuario coach = usuarioRepository.findById(coachId)
                 .orElseThrow(() -> new RuntimeException("Coach no encontrado"));
 
-        Membresia miembroCoach = membresiaRepository.findByIdUsuarioAndRol(coachId,Rol.COACH)
-                .orElseThrow(() -> new IllegalStateException("Coach no encontrado"));
+        authService.validarAsignarRutina(coachId);
 
         List<Membresia> membresiasCoach = membresiaRepository.findByIdUsuario(coachId);
         if (membresiasCoach.isEmpty()) {
@@ -186,6 +194,23 @@ public class RutinaService {
             throw new IllegalArgumentException("Nombre requerido");
         }
         return rutinaRepository.findByNombreContainingIgnoreCase(nombre);
+    }
+
+    public List<RutinaCompleta> obtenerMisRutinas(Long idUsuario) {
+        List<Rutina> rutinas = rutinaRepository.findByIdUsuario(idUsuario);
+        List<RutinaCompleta> resultado = new ArrayList<>();
+
+        for (Rutina rutina : rutinas) {
+            List<RutinaDia> dias = rutinaDiaRepository.findByIdRutina(rutina.getIdRutina());
+            List<DiaConEjercicios> diasConEjercicios = new ArrayList<>();
+
+            for (RutinaDia dia : dias) {
+                List<RutinaEjercicio> ejercicios = rutinaEjercicioRepository.findByIdDia(dia.getIdRutinaDia());
+                diasConEjercicios.add(new DiaConEjercicios(dia, ejercicios));
+            }
+            resultado.add(new RutinaCompleta(rutina, diasConEjercicios));
+        }
+        return resultado;
     }
 
 }
